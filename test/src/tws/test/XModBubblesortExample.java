@@ -10,12 +10,10 @@ public class XModBubblesortExample
 {
 	public static void main(String[] args)
 	{
-		XMod xmod = new XMod();
-		
 		try
 		{
 			InputSource source = new InputSource(new File("test/bubblesort.xml"));
-			System.out.println(xmod.parse(source));
+			System.out.println(new XMod().parse(source));
 		}
 		catch (IOException e)
 		{
