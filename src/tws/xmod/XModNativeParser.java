@@ -9,14 +9,7 @@ import tws.xmod.action.ActionProvider;
 public class XModNativeParser extends AbstractXModParser
 {
 	@Override
-	protected RootNode read(String name, String namespace) throws XModException
-	{
-		read();
-		
-		return (RootNode) nodeStack;
-	}
-	
-	private void read() throws XModException
+	protected void read(String namespace) throws XModException
 	{
 		char c;
 		while ((c = nextSymbol()) != 0)

@@ -11,6 +11,7 @@ public abstract class AbstractXModParser implements XModParser
 	protected Node nodeStack;
 	protected TagNode currentNode;
 	protected StringBuilder content;
+	protected RootNode rootNode;
 	protected int start;
 	protected int pos;
 	
@@ -30,8 +31,10 @@ public abstract class AbstractXModParser implements XModParser
 			this.content = builder;
 			this.pos = 0;
 			this.start = pos;
-			this.nodeStack = new RootNode(inputSource.getName());
-			return read(inputSource.getName(), context.getNamespace());
+			this.rootNode = new RootNode(inputSource.getName());
+			this.nodeStack = rootNode;
+			read(context.getNamespace());
+			return rootNode;
 		}
 		catch(XModException e)
 		{
@@ -42,8 +45,13 @@ public abstract class AbstractXModParser implements XModParser
 			throw new XModException(e);
 		}
 	}
+	
+	public RootNode getRoot()
+	{
+		return rootNode;
+	}
 
-	abstract protected RootNode read(String name, String namespace) throws XModException;
+	abstract protected void read(String namespace) throws XModException;
 	
 	protected char nextSymbol() throws XModException
 	{
@@ -63,7 +71,7 @@ public abstract class AbstractXModParser implements XModParser
 	
 	protected boolean isWhiteSpace(char c)
 	{
-		return c == ' ' || c == '\t' || c == '\n' || c == '\r';
+		return c <= ' ';
 	}
  
 	protected boolean isIdentifier(char c)
@@ -102,8 +110,11 @@ public abstract class AbstractXModParser implements XModParser
 	
 	protected void addAttribut(String name, String value) throws XModException
 	{
+		System.out.print("Att:  ");
+		debugPositionInfo(start);
+		
 		if (!currentNode.addAttribut(name, value))
-			throwException("Dublicate attribute '" + name + "' for node '" + currentNode.getName() + "'");
+			throwException(currentNode.getSourcePosition(), "Dublicate attribute '" + name + "' for node '" + currentNode.getName() + "'");
 	}
 	
 	protected boolean match(String string)
@@ -138,41 +149,11 @@ public abstract class AbstractXModParser implements XModParser
 		return name;
 	}
 	
-//	protected String parseValueUntil(char... stops) throws XModException
-//	{
-//		int start = pos;
-//		
-//		char c;
-//		while ((c = nextSymbol()) != 0)
-//		{
-//			for(int i = 0; i < stops.length; i++)
-//			{
-//				if (c == stops[i]) break;
-//			}
-//			
-//			if (c == '"' || c == '\'')
-//			{
-//				parseString(c, true);
-//			}
-//			if (c == '[')
-//			{
-//				parseString(']', true);
-//			}
-//			if (c == '(')
-//			{
-//				parseString(')', true);
-//			}
-//			pos++;
-//		}
-//		
-//		// Für den Zugriff auf den Terminierer.
-//		pos--;
-//		return content.substring(start, pos).trim();
-//	}
-	
 	protected void newTag(String name)
 	{
-		currentNode = new TagNode(nodeStack, pos, name);
+		System.out.print("nTag: ");
+		debugPositionInfo(start);
+		currentNode = new TagNode(nodeStack, start, name);
 	}
 	
 	protected void openTag()
@@ -196,7 +177,9 @@ public abstract class AbstractXModParser implements XModParser
 	
 	protected void addText(String text)
 	{
-		new TextNode(nodeStack, pos, text);
+		System.out.print("Text: ");
+		debugPositionInfo(start);
+		new TextNode(nodeStack, start, text);
 	}
 	
 	protected char getEndChar(char startChar)
@@ -215,6 +198,14 @@ public abstract class AbstractXModParser implements XModParser
 	
 	protected void throwException(String message) throws XModException
 	{
+		throwException(this.pos, message);
+	}
+	
+	protected void throwException(int pos, String message) throws XModException
+	{
+		System.out.print("Error: ");
+		debugPositionInfo(pos);
+		
 		int lStart = content.lastIndexOf("\n", pos);
 		int lEnd = content.indexOf("\n", pos+1);
 		if (lStart == -1) lStart = 0;
@@ -222,5 +213,32 @@ public abstract class AbstractXModParser implements XModParser
 		String line = content.substring(lStart, lEnd);
 		
 		throw new XModException(line, pos - lStart, message);
+	}
+	
+	///DEBUG: Debugausgaben zur Nodeposition (Zeilenorientiert)
+	private void debugPositionInfo(int p)
+	{
+		int colStart = 0;
+		int line = 1;
+		char c;
+		for (int i = 0; i < p; i++)
+		{
+			c = content.charAt(i);
+			
+			if (c == '\n')
+			{
+				colStart = i+1;
+				line++;
+			}
+		}
+		int column = p - colStart + 1;
+		System.out.print("Zeile: " + String.format("%3d", line) + "; Spalte " + String.format("%3d", column) + ":\t");
+		
+		int start = p;//Math.max(p-5, 0);
+		int ende = Math.min(p+10, content.length()-1);
+		String str = content.substring(start, ende).replaceAll("\r", "").replaceAll("\n", "\\\\n");
+		
+		System.out.println(str);
+//		System.out.println();
 	}
 }

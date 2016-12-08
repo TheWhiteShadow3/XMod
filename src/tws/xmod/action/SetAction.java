@@ -10,8 +10,19 @@ public class SetAction implements Action
 	@Override
 	public void execute(TagNode node, XModContext context) throws XModException
 	{
-		String var = Util.getExpectedSingleAttributeName(node);
-		String value = node.getAttribut(var);
+		String var;
+		String value;
+		
+		if (node.getAttributCount() == 1)
+		{
+			var = Util.getExpectedSingleAttributeName(node);
+			value = node.getAttribut(var);
+		}
+		else
+		{
+			var = Util.getRequiredNamedAttribute(node, "var");
+			value = Util.getRequiredNamedAttribute(node, "value");
+		}
 		
 		context.resolveExpression(var + ":=" + value);
 	}
