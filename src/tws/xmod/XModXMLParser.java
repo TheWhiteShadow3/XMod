@@ -3,7 +3,6 @@ package tws.xmod;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-//XXX: Geändert
 /**
  * @author TheWhiteShadow
  */

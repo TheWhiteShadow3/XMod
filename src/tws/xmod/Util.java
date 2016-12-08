@@ -3,7 +3,6 @@ package tws.xmod;
 import java.util.List;
 import java.util.Set;
 
-//XXX: Geändert
 /**
  * Werkzeugklasse für Tags.
  * @author TheWhiteShadow

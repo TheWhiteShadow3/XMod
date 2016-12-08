@@ -3,6 +3,10 @@ package tws.xmod;
 import java.io.IOException;
 import java.util.Arrays;
 
+/**
+ * Zeigt einen Fehler im XMod-System an.
+ * @author TheWhiteShadow
+ */
 public class XModException extends IOException
 {
 	private static final long serialVersionUID = 6643670630959371422L;

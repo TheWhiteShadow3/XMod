@@ -7,7 +7,6 @@ import tws.xmod.Util;
 import tws.xmod.XModContext;
 import tws.xmod.XModException;
 
-//XXX: Geändert
 public class ForAction implements Action
 {
 	@Override

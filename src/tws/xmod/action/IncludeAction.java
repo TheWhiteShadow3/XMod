@@ -3,11 +3,10 @@ package tws.xmod.action;
 import tws.xmod.InputSource;
 import tws.xmod.TagNode;
 import tws.xmod.Util;
-import tws.xmod.XMod;
 import tws.xmod.XModContext;
 import tws.xmod.XModException;
+import tws.xmod.XModSystem;
 
-//XXX: Geändert
 public class IncludeAction implements Action
 {
 	@Override
@@ -16,6 +15,6 @@ public class IncludeAction implements Action
 		String urlName = Util.getRequiredDefaultAttribute(node, "url");
 		
 		InputSource inputSource = new InputSource(context.getInputSource(), urlName);
-		context.write(XMod.findParser(inputSource).read(inputSource, context));
+		context.write(XModSystem.findParser(inputSource).read(inputSource, context));
 	}
 }

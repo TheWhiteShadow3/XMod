@@ -1,6 +1,5 @@
 package tws.xmod;
 
-//XXX: Geändert
 public class TextNode extends Node
 {
 	private String text;

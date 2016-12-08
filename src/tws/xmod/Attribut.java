@@ -1,6 +1,6 @@
 package tws.xmod;
 
-//XXX: Geändert
+@Deprecated
 public class Attribut
 {
 	private String name;

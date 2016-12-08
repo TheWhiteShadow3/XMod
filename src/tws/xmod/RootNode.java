@@ -1,6 +1,5 @@
 package tws.xmod;
 
-//XXX: Geändert
 public class RootNode extends Node
 {
 	private String filename;

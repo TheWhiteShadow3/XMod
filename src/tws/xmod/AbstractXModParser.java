@@ -3,7 +3,9 @@ package tws.xmod;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-//XXX: Neu!
+/**
+ * @author TheWhiteShadow
+ */
 public abstract class AbstractXModParser implements XModParser
 {
 	protected Node nodeStack;

@@ -10,7 +10,9 @@ import java.io.OutputStreamWriter;
 import tws.xmod.action.Action;
 import tws.xmod.action.ActionProvider;
 
-//XXX: Geändert
+/**
+ * @author TheWhiteShadow
+ */
 public class XModWriter implements AutoCloseable
 {
 	private OutputStreamWriter writer;

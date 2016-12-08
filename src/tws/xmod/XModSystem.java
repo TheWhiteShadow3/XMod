@@ -11,9 +11,70 @@ import tws.expression.Expression;
 import tws.expression.Operation;
 import tws.expression.Resolver;
 
-//XXX: Geändert
+/**
+ * @author TheWhiteShadow
+ */
 public class XModSystem implements XModContext, XModConfig
 {
+	private static Map<String, Class<? extends XModParser>> parserMap;
+	
+	static
+	{
+		parserMap = new HashMap<>();
+		addParser(XModXMLParser.class, false, null, "xml", "xhtml"); // default
+		addParser(XModNativeParser.class, false, "xmod");
+	}
+	
+	/**
+	 * Fügt einen Parser hinzu.
+	 * Um einen default-Parser anzugeben, kann die Dateierweiterung <code>null</code> sein.
+	 * @param clazz Klasse des Parser.
+	 * @param overrite Gibt an, ob ein bereits bestehender Parser für eine Dateiendung ersetzt werden soll.
+	 * @param extensions Dateierweiterungen, die dem Parser zugeordnet werden sollen.
+	 */
+	public static void addParser(Class<? extends XModParser> clazz, boolean overrite, String... extensions)
+	{
+		for(String ext : extensions)
+		{
+			if (!overrite && parserMap.containsKey(ext)) continue;
+			parserMap.put(ext, clazz);
+		}
+	}
+	
+	/**
+	 * Sucht einen XMod Parser, der mit der Dateiendung der angegebenen Eingabe-Quelle assoziiert ist.
+	 * Wenn keine Parser gefunden wurde wird versucht nach einem default-Parser gesucht.
+	 * Wird dieser auch nicht gefunden wird eine Fehlermeldung geworfen.
+	 * @param inputSource Die Eingabe-Quelle.
+	 * @return Den gefundenen Parser für die Eingabe-Quelle.
+	 * @throws XModException Wenn kein Parser gefunden wurde.
+	 */
+	public static XModParser findParser(InputSource inputSource) throws XModException
+	{
+		String ext =  getExtension(inputSource.getName());
+		try
+		{
+			Class<? extends XModParser> parserClass = parserMap.get(ext);
+			if (parserClass == null)	
+				throw new XModException("could not find parser for file extension '" + ext + "'");
+			
+			return parserClass.newInstance();
+		}
+		catch (InstantiationException | IllegalAccessException e)
+		{
+			throw new XModException(e);
+		}
+	}
+	
+	private static String getExtension(String filename)
+	{
+		if (filename == null) return null;
+		int dot = filename.lastIndexOf('.');
+		if (dot == -1) return null;
+		
+		return filename.substring(dot+1);
+	}
+	
 	private String namespace = "xmod";
 
 	private InputSource inputSource;

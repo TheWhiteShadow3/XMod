@@ -3,7 +3,9 @@ package tws.xmod;
 import tws.xmod.action.Action;
 import tws.xmod.action.ActionProvider;
 
-//XXX: Neu!
+/**
+ * @author TheWhiteShadow
+ */
 public class XModNativeParser extends AbstractXModParser
 {
 	@Override
