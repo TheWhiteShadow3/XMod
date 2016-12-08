@@ -31,9 +31,9 @@ public class XModException extends IOException
 	{
 		StringBuilder builder = new StringBuilder(256);
 		builder.append(message);
-		builder.append('\n').append(line);
+		builder.append('\n').append(line.replace('\t', ' '));
 		
-		char[] chars = Arrays.copyOf(line.toCharArray(), line.length() + 1);
+		char[] chars = new char[pos+1];
 		Arrays.fill(chars, ' ');
 		chars[pos] = '^';
 		

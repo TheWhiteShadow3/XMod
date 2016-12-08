@@ -10,12 +10,13 @@ public class ActionProvider
 	{
 		actions.put("print", new PrintAction());
 		actions.put("if", new IfAction());
-		actions.put("for", new ForAction());
+		actions.put("foreach", new ForAction());
 		actions.put("while", new WhileAction());
 		actions.put("set", new SetAction());
 		actions.put("list", new ListAction());
 		actions.put("htmllist", new HTMLListAction());
 		actions.put("include", new IncludeAction());
+		actions.put("eval", new EvalAction());
 	}
 
 	private static final ActionProvider instance = new ActionProvider();

@@ -1,13 +1,14 @@
 package tws.xmod;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
-
+//XXX: Geändert
 public class TagNode extends Node
 {
 	private String name;
-	private final List<Attribut> attributes = new ArrayList<Attribut>(4);
+	private final Map<String, String> attributes = new HashMap<String, String>(4);
 	
 	TagNode(Node parent, int pos, String name)
 	{
@@ -20,9 +21,14 @@ public class TagNode extends Node
 		return name;
 	}
 
-	public List<Attribut> getAttributes()
+	public Map<String, String> getAttributes()
 	{
-		return attributes;
+		return Collections.unmodifiableMap(attributes);
+	}
+	
+	public int getAttributCount()
+	{
+		return attributes.size();
 	}
 	
 	public String getAttribut(String name, String def)
@@ -36,19 +42,18 @@ public class TagNode extends Node
 	{
 		if (name == null) throw new NullPointerException("name is null");
 		
-		for(int i = 0; i < attributes.size(); i++)
-		{
-			Attribut att = attributes.get(i);
-			if ( name.equals(att.getName()) ) return att.getValue();
-		}
-		return null;
+		return attributes.get(name);
 	}
 
-	public void addAttribut(Attribut att)
+	public boolean addAttribut(String name, String value)
 	{
-		if (att == null) throw new NullPointerException("att is null");
+		if (name == null) throw new NullPointerException("Attribute name can not be null");
+		if (value == null) throw new NullPointerException("Attribute value can not be null");
 		
-		attributes.add(att);
+		if (attributes.containsKey(name)) return false;
+		
+		attributes.put(name, value);
+		return true;
 	}
 
 	@Override

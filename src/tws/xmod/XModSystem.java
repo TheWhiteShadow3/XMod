@@ -11,9 +11,10 @@ import tws.expression.Expression;
 import tws.expression.Operation;
 import tws.expression.Resolver;
 
+//XXX: Geändert
 public class XModSystem implements XModContext, XModConfig
 {
-	private String namespace = "xmod:";
+	private String namespace = "xmod";
 
 	private InputSource inputSource;
 	private XModWriter writer;

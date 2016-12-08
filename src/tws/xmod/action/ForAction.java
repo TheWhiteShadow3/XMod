@@ -7,12 +7,13 @@ import tws.xmod.Util;
 import tws.xmod.XModContext;
 import tws.xmod.XModException;
 
+//XXX: Geändert
 public class ForAction implements Action
 {
 	@Override
 	public void execute(TagNode node, XModContext context) throws XModException
 	{
-		String each = Util.getRequiredAttribute(node, "each");
+		String each = Util.getRequiredDefaultAttribute(node, "var");
 		
 		Object obj = context.resolveExpression(each).asObject();
 		

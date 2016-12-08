@@ -11,7 +11,7 @@ public class IfAction implements Action
 	@Override
 	public void execute(TagNode node, XModContext context) throws XModException
 	{
-		String exp = Util.getRequiredAttribute(node, "exp");
+		String exp = Util.getRequiredDefaultAttribute(node, "exp");
 		
 		boolean result = context.resolveExpression(exp).asBoolean();
 		

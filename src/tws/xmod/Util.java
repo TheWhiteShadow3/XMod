@@ -1,8 +1,9 @@
 package tws.xmod;
 
 import java.util.List;
+import java.util.Set;
 
-
+//XXX: Geändert
 /**
  * Werkzeugklasse für Tags.
  * @author TheWhiteShadow
@@ -19,15 +20,51 @@ public class Util
 	 * @return Wert des Attributs.
 	 * @throws XModException Wenn das Attribut nicht existiert.
 	 */
-	public static String getRequiredAttribute(TagNode node, String name) throws XModException
+	public static String getRequiredNamedAttribute(TagNode node, String name) throws XModException
 	{
 		String att = node.getAttribut(name);
 		if (att == null)
-			throw new XModException("Missing Attribute '" + name + "' for Tag " + node.getName() + ".");
+			throw new XModException("Missing attribute '" + name + "' for Tag " + node.getName() + ".");
+
+		return att;
+	}
+	
+	/**
+	 * Gibt den Wert eines Attributs des angegebenen Knotens zurück.
+	 * Wirft eine fehlermeldung, wenn das Attribut nicht existiert.
+	 * @param node Knoten, der das Attribut enthält.
+	 * @param name Name des Attributs.
+	 * @return Wert des Attributs.
+	 * @throws XModException Wenn das Attribut nicht existiert.
+	 */
+	public static String getRequiredDefaultAttribute(TagNode node, String name) throws XModException
+	{
+		String att = node.getAttribut(name);
+		if (att == null)
+			att = node.getAttribut("-default");
+		if (att == null)
+			throw new XModException("Missing attribute '" + name + "' for Tag " + node.getName() + ".");
 
 		return att;
 	}
 
+	/**
+	 * Gibt den Namen eines einzigen Attributs des angegebenen Knotens zurück.
+	 * Wirft eine fehlermeldung, wenn kein oder mehrere Attribute existieren.
+	 * @param node Knoten, der das Attribut enthält.
+	 * @return Name des Attributs.
+	 * @throws XModException Wenn der Knoten kein oder merh als ein Attribut hat.
+	 */
+	public static String getExpectedSingleAttributeName(TagNode node) throws XModException
+	{
+		Set<String> set = node.getAttributes().keySet();
+		if (set.size() != 1)
+			throw new XModException("Tag " + node.getName() + " expect only one attribute.");
+		
+		return set.iterator().next();
+	}
+	
+	
 	/**
 	 * Überprüft, ob ein Knoten genau ein Attribut aus der angegebenen Liste besitzt.
 	 * Wirft eine fehlermeldung, wenn der Knoten weniger oder mehr Attribute aus der Liste gesetzt hat.
@@ -81,7 +118,7 @@ public class Util
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Verarbeitet alle Kindknoten.
 	 * @param parent Der Knoten.

@@ -10,7 +10,7 @@ public class LinkAction implements Action
 	@Override
 	public void execute(TagNode node, XModContext context) throws XModException
 	{
-		String href = Util.getRequiredAttribute(node, "href");
+		String href = Util.getRequiredDefaultAttribute(node, "href");
 		String value = node.getAttribut("text", href);
 		String htmlClass = node.getAttribut("class");
 		

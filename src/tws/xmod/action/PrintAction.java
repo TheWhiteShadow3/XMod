@@ -5,12 +5,13 @@ import tws.xmod.Util;
 import tws.xmod.XModContext;
 import tws.xmod.XModException;
 
+//XXX: Geändert
 public class PrintAction implements Action
 {
 	@Override
 	public void execute(TagNode node, XModContext context) throws XModException
 	{
-		String exp = node.getAttribut("exp");
+		String exp = Util.getRequiredDefaultAttribute(node, "exp");
 		String value = node.getAttribut("value");
 		
 		Util.oneOfTheArguments(node, "exp, value",  exp, value); 

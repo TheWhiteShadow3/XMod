@@ -10,7 +10,7 @@ public class HTMLListAction implements Action
 	@Override
 	public void execute(TagNode node, XModContext context) throws XModException
 	{
-		String var = Util.getRequiredAttribute(node, "var");
+		String var = Util.getRequiredDefaultAttribute(node, "var");
 
 		Object list = context.resolveExpression(var).asObject();
 		if (!(list instanceof Iterable))

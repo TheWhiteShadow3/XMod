@@ -1,10 +1,11 @@
 package tws.xmod;
 
+//XXX: Geändert
 public class TextNode extends Node
 {
-	private CharSequence text;
+	private String text;
 	
-	TextNode(Node parent, int pos, CharSequence text)
+	TextNode(Node parent, int pos, String text)
 	{
 		super(parent, pos);
 		this.text = text;
@@ -12,7 +13,7 @@ public class TextNode extends Node
 
 	public String getText()
 	{
-		return text.toString();
+		return text;
 	}
 
 	@Override

@@ -10,7 +10,7 @@ import java.io.OutputStreamWriter;
 import tws.xmod.action.Action;
 import tws.xmod.action.ActionProvider;
 
-
+//XXX: Geändert
 public class XModWriter implements AutoCloseable
 {
 	private OutputStreamWriter writer;
@@ -64,7 +64,7 @@ public class XModWriter implements AutoCloseable
 			try
 			{
 				this.lastRoot = (RootNode) node;
-				context.setVariable(XModContext.VAR_FILE, lastRoot.getInputSource().getName());
+				context.setVariable(XModContext.VAR_FILE, lastRoot.getFilename());
 				
 				for (Node child : node.getChildren())
 				{
@@ -96,7 +96,7 @@ public class XModWriter implements AutoCloseable
 		catch(XModException e)
 		{
 			System.err.println("\nDebug-Information:" +
-					"\nSource:   " + lastRoot.getInputSource().getName() + 
+					"\nSource:   " + lastRoot.getFilename() + 
 					"\nNode:     " + tagName +
 					"\nPosition: " + tagNode.getSourcePosition());
 			throw e;
@@ -104,7 +104,7 @@ public class XModWriter implements AutoCloseable
 		flush();
 	}
 	
-	private void flush() throws XModException
+	public void flush() throws XModException
 	{
 		try
 		{

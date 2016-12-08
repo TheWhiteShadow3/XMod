@@ -12,7 +12,7 @@ public class WhileAction implements Action
 	@Override
 	public void execute(TagNode node, XModContext context) throws XModException
 	{
-		String exp = Util.getRequiredAttribute(node, "exp");
+		String exp = Util.getRequiredDefaultAttribute(node, "exp");
 		
 		int loops = 0;
 		while (context.resolveExpression(exp).asBoolean())

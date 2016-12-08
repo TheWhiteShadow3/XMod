@@ -1,19 +1,19 @@
 package tws.xmod;
 
-
+//XXX: Geändert
 public class RootNode extends Node
 {
-	private InputSource inputSource;
-	
-	RootNode(InputSource inputSource)
+	private String filename;
+
+	RootNode(String filename)
 	{
 		super(null, -1);
-		this.inputSource = inputSource;
+		this.filename = filename;
 	}
 
-	public InputSource getInputSource()
+	public String getFilename()
 	{
-		return inputSource;
+		return filename;
 	}
 
 	@Override

@@ -5,15 +5,13 @@ import tws.xmod.Util;
 import tws.xmod.XModContext;
 import tws.xmod.XModException;
 
-//XXX: Geändert
-public class SetAction implements Action
+public class EvalAction implements Action
 {
 	@Override
 	public void execute(TagNode node, XModContext context) throws XModException
 	{
-		String var = Util.getExpectedSingleAttributeName(node);
-		String value = node.getAttribut(var);
+		String exp = Util.getRequiredDefaultAttribute(node, "exp");
 		
-		context.resolveExpression(var + ":=" + value);
+		context.setVariable("?", context.resolveExpression(exp).asObject()); 
 	}
 }
