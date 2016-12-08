@@ -94,6 +94,13 @@ public class XModTest
 		
 		try
 		{
+			xmod.parse(input("<xmod:tag att='a' att='b'/>"));
+			fail();
+		}
+		catch(XModException e) { handleException(e); }
+		
+		try
+		{
 			xmod.parse(input("${5"));
 			fail();
 		}

@@ -11,7 +11,9 @@ public class PrintAction implements Action
 	@Override
 	public void execute(TagNode node, XModContext context) throws XModException
 	{
-		String exp = Util.getRequiredDefaultAttribute(node, "exp");
+		String exp = node.getAttribut("exp");
+		if (exp == null)
+			exp = node.getDefaultAttribut();
 		String value = node.getAttribut("value");
 		
 		Util.oneOfTheArguments(node, "exp, value",  exp, value); 

@@ -110,11 +110,11 @@ public abstract class AbstractXModParser implements XModParser
 	
 	protected void addAttribut(String name, String value) throws XModException
 	{
-		System.out.print("Att:  ");
-		debugPositionInfo(start);
+//		System.out.print("Att:  ");
+//		debugPositionInfo(start);
 		
 		if (!currentNode.addAttribut(name, value))
-			throwException(currentNode.getSourcePosition(), "Dublicate attribute '" + name + "' for node '" + currentNode.getName() + "'");
+			throwException(currentNode.getSourcePosition(), "Dublicate attribute '" + name + "' for tag '" + currentNode.getName() + "'");
 	}
 	
 	protected boolean match(String string)
@@ -151,8 +151,8 @@ public abstract class AbstractXModParser implements XModParser
 	
 	protected void newTag(String name)
 	{
-		System.out.print("nTag: ");
-		debugPositionInfo(start);
+//		System.out.print("nTag: ");
+//		debugPositionInfo(start);
 		currentNode = new TagNode(nodeStack, start, name);
 	}
 	
@@ -170,15 +170,15 @@ public abstract class AbstractXModParser implements XModParser
 		
 		Node node = nodeStack.getParent();
 		if (node == null)
-			throwException("Parent node is null.");
+			throwException("Parent tag is null.");
 			
 		nodeStack = node;
 	}
 	
 	protected void addText(String text)
 	{
-		System.out.print("Text: ");
-		debugPositionInfo(start);
+//		System.out.print("Text: ");
+//		debugPositionInfo(start);
 		new TextNode(nodeStack, start, text);
 	}
 	
@@ -203,8 +203,8 @@ public abstract class AbstractXModParser implements XModParser
 	
 	protected void throwException(int pos, String message) throws XModException
 	{
-		System.out.print("Error: ");
-		debugPositionInfo(pos);
+//		System.out.print("Error: ");
+//		debugPositionInfo(pos);
 		
 		int lStart = content.lastIndexOf("\n", pos);
 		int lEnd = content.indexOf("\n", pos+1);
@@ -216,6 +216,7 @@ public abstract class AbstractXModParser implements XModParser
 	}
 	
 	///DEBUG: Debugausgaben zur Nodeposition (Zeilenorientiert)
+	@SuppressWarnings("unused")
 	private void debugPositionInfo(int p)
 	{
 		int colStart = 0;

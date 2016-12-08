@@ -4,9 +4,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-//XXX: Geändert
 public class TagNode extends Node
 {
+	static final String DEFAULT_ATTRIBUT_NAME = "-default";
+	
 	private String name;
 	private final Map<String, String> attributes = new HashMap<String, String>(4);
 	
@@ -43,6 +44,11 @@ public class TagNode extends Node
 		if (name == null) throw new NullPointerException("name is null");
 		
 		return attributes.get(name);
+	}
+	
+	public String getDefaultAttribut()
+	{
+		return attributes.get(DEFAULT_ATTRIBUT_NAME);
 	}
 
 	public boolean addAttribut(String name, String value)
