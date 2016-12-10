@@ -74,7 +74,7 @@ public class XModXMLParser extends AbstractXModParser
 		
 		if (start < pos-1)
 		{
-			addText(read(start, pos-1, false));
+			addText(read(false));
 		}
 
 		if (nodeStack != rootNode)
