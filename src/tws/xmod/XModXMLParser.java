@@ -145,7 +145,6 @@ public class XModXMLParser extends AbstractXModParser
 			if (c != '>')
 				throwException("Trash in close tag.");
 			
-			pos++;
 			return;
 		}
 		
