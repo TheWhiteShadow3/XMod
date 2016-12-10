@@ -10,9 +10,10 @@ public abstract class AbstractXModParser implements XModParser
 {
 	protected Node nodeStack;
 	protected TagNode currentNode;
-	protected StringBuilder content;
+	private StringBuilder content;
 	protected RootNode rootNode;
 	protected int start;
+
 	protected int pos;
 	
 	@Override
@@ -51,7 +52,39 @@ public abstract class AbstractXModParser implements XModParser
 		return rootNode;
 	}
 
+	protected StringBuilder getContent()
+	{
+		return content;
+	}
+
 	abstract protected void read(String namespace) throws XModException;
+	
+	protected int indexOf(String str, int fromIndex)
+	{
+		return content.indexOf(str, fromIndex);
+	}
+	
+	protected int length()
+	{
+		return content.length();
+	}
+	
+	protected char expectChar() throws XModException
+	{
+		if (pos >= content.length()) throwException("Unexpected end of file.");
+		return content.charAt(pos);
+	}
+
+	protected char getChar() throws XModException
+	{
+		return getChar(pos);
+	}
+	
+	protected char getChar(int pos) throws XModException
+	{
+		if (pos >= content.length()) return 0; //throwException("Unexpected end of file.");
+		return content.charAt(pos);
+	}
 	
 	protected char nextSymbol() throws XModException
 	{
@@ -128,7 +161,7 @@ public abstract class AbstractXModParser implements XModParser
 		return true;
 	}
 	
-	protected String parseString(char endChar, boolean include) throws XModException
+	protected final String parseString(char endChar, boolean include) throws XModException
 	{
 		int pos = this.pos;
 		do
@@ -142,9 +175,9 @@ public abstract class AbstractXModParser implements XModParser
 
 		String name;
 		if (include)
-			name = content.substring(this.pos, pos+1);
+			name = read(this.pos, pos+1, true);
 		else
-			name = content.substring(this.pos+1, pos);
+			name = read(this.pos+1, pos, true);
 		this.pos = pos+1;
 		return name;
 	}
@@ -213,6 +246,34 @@ public abstract class AbstractXModParser implements XModParser
 		String line = content.substring(lStart, lEnd);
 		
 		throw new XModException(line, pos - lStart, message);
+	}
+	
+	protected String read(int start, int pos, boolean escChars)
+	{
+		String str = content.substring(start, pos);
+		if (escChars)
+		{
+			StringBuilder builder = new StringBuilder(str);
+			
+			int p = builder.length();
+			while((p = builder.lastIndexOf("\\n", p-1)) != -1)
+				builder.replace(p, p+2, "\n");
+			
+			p = builder.length();
+			while((p = builder.lastIndexOf("\\t", p-1)) != -1)
+				builder.replace(p, p+2, "\t");
+			
+			return builder.toString();
+		}
+		else
+		{
+			return str;
+		}
+	}
+	
+	protected String read(boolean escChars)
+	{
+		return read(start, pos, escChars);
 	}
 	
 	///DEBUG: Debugausgaben zur Nodeposition (Zeilenorientiert)

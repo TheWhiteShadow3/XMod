@@ -67,7 +67,7 @@ public class XModNativeParser extends AbstractXModParser
 		{
 			if (c == '"')
 			{
-				content.replace(pos, pos+1, "'");
+				getContent().replace(pos, pos+1, "'");
 				c = '\'';
 			}
 			
@@ -87,7 +87,7 @@ public class XModNativeParser extends AbstractXModParser
 //		if (end == -1) end = content.length() - 1;
 //		
 //		pos = end+1;
-		return content.substring(start, pos);
+		return read(false);
 	}
 
 	private void parseArgument() throws XModException
@@ -150,7 +150,7 @@ public class XModNativeParser extends AbstractXModParser
 					c = nextSymbol();
 				}
 				else
-					value = content.substring(start, pos).trim();
+					value = read(true).trim();
 				addAttribut(name, value);
 				
 				if (c == ',')
@@ -183,7 +183,7 @@ public class XModNativeParser extends AbstractXModParser
 			}
 			if (c == '=')
 			{
-				name = content.substring(start, pos);
+				name = read(false);
 				pos++;
 				start = pos;
 				continue;

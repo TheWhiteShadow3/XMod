@@ -15,17 +15,15 @@ public class XModXMLParser extends AbstractXModParser
 		String xModComment = "!--" + openPattern;
 		
 		char c;
-		while (pos < content.length())
+		while ((c = getChar()) != 0)
 		{
-			c = content.charAt(pos);
-			
 			if (c == '<')
 			{
 				if (match(pos + 1, openPattern))
 				{
 					if (start < pos)
 					{
-						addText(content.substring(start, pos));
+						addText(read(false));
 						start = pos;
 					}
 					pos += openPattern.length()+1;
@@ -36,7 +34,7 @@ public class XModXMLParser extends AbstractXModParser
 				{
 					if (start < pos)
 					{
-						addText(content.substring(start, pos));
+						addText(read(false));
 						start = pos;
 					}
 					pos += closePattern.length()+1;
@@ -47,7 +45,7 @@ public class XModXMLParser extends AbstractXModParser
 				{
 					if (start < pos)
 					{
-						addText(content.substring(start, pos));
+						addText(read(false));
 						start = pos;
 					}
 					pos += xModComment.length()+1;
@@ -64,23 +62,19 @@ public class XModXMLParser extends AbstractXModParser
 			}
 			else if (match(pos, "${"))
 			{
-				if (pos > 0 && content.charAt(pos-1) == '\\')
+				if (pos == 0 || getChar(pos - 1) != '\\')
 				{
-					addText(content.substring(start, pos-1));
-				}
-				else
-				{
-					addText(content.substring(start, pos));
+					addText(read(false));
 					parseValue();
+					start = pos;
 				}
-				start = pos;
 			}
 			pos++;
 		}
 		
 		if (start < pos-1)
 		{
-			addText(content.substring(start, pos-1));
+			addText(read(start, pos-1, false));
 		}
 
 		if (nodeStack != rootNode)
@@ -91,10 +85,10 @@ public class XModXMLParser extends AbstractXModParser
 	
 	private void parseValue() throws XModException
 	{
-		int end = content.indexOf("}", pos);
+		int end = indexOf("}", pos);
 		if (end == -1) throw new XModException("Missing token '}'");
 
-		String value = content.substring(pos+2, end);
+		String value = read(pos+2, end, false);
 		newTag("print");
 		addAttribut("exp", value);
 		pos = end+1;
@@ -102,32 +96,41 @@ public class XModXMLParser extends AbstractXModParser
 
 	private int parseComment(int pos)
 	{
-		int end = content.indexOf("-->", pos);
+		int end = indexOf("-->", pos);
 		// if (end == -1): Fehlendes Kommentar Ende, aber wayne.
-		return (end == -1) ? content.length() : end + 2;
+		return (end == -1) ? length() : end + 2;
 	}
 
-	private boolean match(int pos, String string)
+	private boolean match(int pos, String str) throws XModException
 	{
-		if (content.length() < pos + string.length()) return false;
-
-		for (int i = 0; i < string.length(); i++)
+		int m = 0;
+		char c;
+		while (m < str.length())
 		{
-			if (content.charAt(pos + i) != string.charAt(i)) return false;
+			c = getChar(pos + m);
+			
+			if (c != str.charAt(m)) return false;
+			m++;
 		}
-		return true;
+//		if (content.length() < pos + string.length()) return false;
+//
+//		for (int i = 0; i < string.length(); i++)
+//		{
+//			if (content.charAt(pos + i) != string.charAt(i)) return false;
+//		}
+		return str.length() == m;
 	}
 
 	private void parseTag(boolean open) throws XModException
 	{
 		String attName = null;
-		int inString = 0;
+//		int inString = 0;
 		boolean expectAttValue = false;
 
 		char c;
 		int nameStart = pos;
-		while(isIdentifier(c = nextChar())) { pos++; }
-		String tagName = content.substring(nameStart, pos);
+		while(isIdentifier(c = expectChar())) { pos++; }
+		String tagName = read(nameStart, pos, false);
 		if (tagName.isEmpty())
 			throwException("XMod-Tag has no name.");
 		
@@ -148,18 +151,36 @@ public class XModXMLParser extends AbstractXModParser
 		
 		start = pos;
 		pos--;
-		while((c = nextChar()) != 0)
+		while(true)
 		{
-			if (inString > 0)
+			c = getChar();
+			
+			if (c == 0)
+				throwException("Unexpected end of file.");
+			
+			if (c == '"' || c == '\'')
 			{
-				if (((inString == 1 && c == '\'') || (inString == 2 && c == '\"')) && content.charAt(pos - 1) != '\\')
-				{
-					inString = 0;
-					addAttribut(attName, content.substring(start, pos));
-					attName = null;
-					expectAttValue = false;
-					start = pos + 1;
-				}
+				String value = parseString(c, false);
+				addAttribut(attName, value);
+				attName = null;
+				expectAttValue = false;
+				start = pos + 1;
+				continue;
+				
+//				if (((inString == 1 && c == '\'') || (inString == 2 && c == '\"')) && getChar(pos - 1) != '\\')
+//				{
+//					inString = 0;
+//					addAttribut(attName, read(true));
+//					attName = null;
+//					expectAttValue = false;
+//					start = pos + 1;
+//				}
+//				pos++;
+//				continue;
+			}
+
+			if (isIdentifier(c))
+			{
 				pos++;
 				continue;
 			}
@@ -169,16 +190,10 @@ public class XModXMLParser extends AbstractXModParser
 				openTag();
 				break;
 			}
-
-			if (isIdentifier(c))
-			{
-				pos++;
-				continue;
-			}
 			
 			if (start < pos)
 			{
-				attName = content.substring(start, pos);
+				attName = read(false);
 			}
 			start = pos + 1;
 			
@@ -187,10 +202,10 @@ public class XModXMLParser extends AbstractXModParser
 				pos++;
 				continue;
 			}
-
-			if (c == '\'') inString = 1;
-			else if (c == '\"') inString = 2;
-			else if (c == '=' && attName != null) { expectAttValue = true; }
+			
+//			if (c == '\'') inString = 1;
+//			else if (c == '\"') inString = 2;
+			if (c == '=' && attName != null) { expectAttValue = true; }
 			else if (c == '/')
 			{
 				if (attName != null)
@@ -203,7 +218,7 @@ public class XModXMLParser extends AbstractXModParser
 				}
 				
 				pos++;
-				if (nextChar() != '>')
+				if (getChar() != '>')
 						throwException("Missing token '>'");
 				
 				break;
@@ -268,11 +283,5 @@ public class XModXMLParser extends AbstractXModParser
 			throw new XModException("Missing Close-Tag for '" + currentName + "'.");
 		
 		super.closeTag();
-	}
-	
-	private char nextChar() throws XModException
-	{
-		if (pos >= content.length()) throwException("Unexpected end of file.");
-		return content.charAt(pos);
 	}
 }
