@@ -14,7 +14,7 @@ public class XModNativeParser extends AbstractXModParser
 		char c;
 		while ((c = nextSymbol()) != 0)
 		{
-			if (c == '\n')
+			if (c == '\r' || c == '\n')
 			{
 				pos++;
 				continue;
@@ -75,7 +75,7 @@ public class XModNativeParser extends AbstractXModParser
 			{
 				parseString('\'', true);
 			}
-			if (c == '\n')
+			else if (c == '\r' || c == '\n')
 			{
 				break;
 			}
@@ -235,6 +235,6 @@ public class XModNativeParser extends AbstractXModParser
 	@Override
 	protected boolean isWhiteSpace(char c)
 	{
-		return c == ' ' || c == '\t' || c == '\r';
+		return c == ' ' || c == '\t';
 	}
 }
