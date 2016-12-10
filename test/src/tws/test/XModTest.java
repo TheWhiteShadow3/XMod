@@ -126,6 +126,9 @@ public class XModTest
 		result = xmod.parse(input("<xmod:print value='/>' />"));
 		assertEquals("/>", result);
 		
+		result = xmod.parse(input("<tag att=\"<xmod:print value='string' />\" />"));
+		assertEquals("<tag att=\"string\" />", result);
+		
 		ActionProvider.getInstance().addAction("t4g:name", DUMMY_ACTION);
 		
 		xmod.parse(new InputSource("<xmod:t4g:name />"));
@@ -136,6 +139,19 @@ public class XModTest
 		URL url = new File(System.getProperty("user.dir") + "/test/include.xml").toURI().toURL();
 		result = xmod.parse(input("<xmod:include url='" + url + "' />"));
 		assertTrue(!result.isEmpty());
+	}
+	
+	@Test
+	public void cascadeTest() throws IOException
+	{
+		XMod xmod = new XMod();
+		xmod.getConfig().setNamespace("x1");
+		
+		String result = xmod.parse(input("<x2:print exp=\"2 * <x1:print value='5' />\" />"));
+		xmod.getConfig().setNamespace("x2");
+		
+		result = xmod.parse(input(result));
+		assertEquals("10", result);
 	}
 	
 	private InputSource input(String str)
